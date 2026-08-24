@@ -195,21 +195,6 @@
   .warn-box.none{display:none}
   .foot-note{font-size:11.5px;color:var(--muted);margin-top:12px;line-height:1.6}
 
-  /* 登录门禁 */
-  .login-gate{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
-  .login-gate.hidden{display:none}
-  .login-card{background:var(--surface-solid);border:1px solid var(--sep);border-radius:24px;padding:30px 28px;width:100%;max-width:360px;box-shadow:var(--shadow-lg)}
-  .login-card .ll{display:flex;align-items:center;gap:10px;margin-bottom:18px}
-  .login-card .ll img{height:30px}
-  .login-card h2{font-size:16px;font-weight:700;margin:0}
-  .login-card .lf{display:flex;flex-direction:column;gap:10px}
-  .login-card .lf label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--muted)}
-  .login-card .lf input{font-family:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--sep);border-radius:10px;background:var(--field);color:var(--text)}
-  .login-card .lf input:focus{outline:none;border-color:var(--accent)}
-  .login-card .lb{margin-top:6px;display:flex;align-items:center;gap:10px}
-  .login-card .lb button{flex:1;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
-  .login-card .err{color:var(--red);font-size:12.5px;min-height:16px}
-  .login-card .hint{font-size:11.5px;color:var(--muted);margin-top:4px}
 
   /* 版本戳 */
   .version-stamp{position:fixed;right:12px;bottom:7px;z-index:50;font-size:11px;color:var(--muted);opacity:.72;pointer-events:none;user-select:none;letter-spacing:.2px}
@@ -217,19 +202,6 @@
 </style>
 </head>
 <body data-theme="light">
-<!-- 登录门禁（未认证时覆盖整页） -->
-<div class="login-gate" id="loginGate">
-  <div class="login-card">
-    <div class="ll"><img id="loginLogo" alt="Alfa Laval"><h2>区域供热换热子站节能改造投资回报计算器</h2></div>
-    <form class="lf" id="loginForm" autocomplete="off">
-      <label>用户名<input type="text" id="loginUser" autocomplete="off"></label>
-      <label>密码<input type="password" id="loginPass" autocomplete="off"></label>
-      <div class="lb"><button type="submit">登 录</button></div>
-      <div class="err" id="loginErr"></div>
-      <div class="hint">本系统受保护，请输入账号密码后使用。</div>
-    </form>
-  </div>
-</div>
 <header>
   <div class="head-row">
     <img class="brand-logo" id="brandLogo" alt="Alfa Laval">
@@ -613,70 +585,6 @@
   (function(){ const el=document.getElementById("brandLogo"); if(el) el.src=LOGO_DATA;
     const el2=document.getElementById("loginLogo"); if(el2) el2.src=LOGO_DATA; })();
 
-  // ---------- 登录门禁 + 防反编译 ----------
-  const AUTH_USER = "d0c291df3c0185fef83f1441524140f40c6a3f44eddede236e01be59e091eaf5"; // sha256("cnshrgo")
-  const AUTH_PASS = "ad095b3a02a0d77857a5ca9149d4b4ee9dfe8c176fc715a9041f270eb95827e7"; // sha256("Alfash01")
-  function sha256(ascii){
-    function rr(x,n){return (x>>>n)|(x<<(32-n));}
-    var K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
-           0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
-           0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
-           0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
-           0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
-           0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
-           0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
-           0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
-    var H=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
-    var msg=ascii, bitLen=msg.length*8;
-    msg+='\x80';
-    while(msg.length%64!==56) msg+='\x00';
-    msg += String.fromCharCode(0,0,0,0,(bitLen>>>24)&255,(bitLen>>>16)&255,(bitLen>>>8)&255,bitLen&255);
-    var w=new Array(64);
-    for(var off=0; off<msg.length; off+=64){
-      for(var i=0;i<16;i++){
-        var c0=msg.charCodeAt(off+i*4),c1=msg.charCodeAt(off+i*4+1),c2=msg.charCodeAt(off+i*4+2),c3=msg.charCodeAt(off+i*4+3);
-        w[i]=((c0<<24)|(c1<<16)|(c2<<8)|c3)>>>0;
-      }
-      for(var i=16;i<64;i++){
-        var s0=(rr(w[i-15],7)^rr(w[i-15],18)^(w[i-15]>>>3))>>>0;
-        var s1=(rr(w[i-2],17)^rr(w[i-2],19)^(w[i-2]>>>10))>>>0;
-        w[i]=(w[i-16]+s0+w[i-7]+s1)|0;
-      }
-      var a=H[0],b=H[1],c=H[2],d=H[3],e=H[4],f=H[5],g=H[6],h=H[7];
-      for(var i=0;i<64;i++){
-        var S1=(rr(e,6)^rr(e,11)^rr(e,25))>>>0;
-        var ch=(e&f)^((~e)&g);
-        var t1=(h+S1+ch+K[i]+w[i])|0;
-        var S0=(rr(a,2)^rr(a,13)^rr(a,22))>>>0;
-        var mj=(a&b)^(a&c)^(b&c);
-        var t2=(S0+mj)|0;
-        h=g;g=f;f=e;e=(d+t1)|0;d=c;c=b;b=a;a=(t1+t2)|0;
-      }
-      H[0]=(H[0]+a)|0;H[1]=(H[1]+b)|0;H[2]=(H[2]+c)|0;H[3]=(H[3]+d)|0;
-      H[4]=(H[4]+e)|0;H[5]=(H[5]+f)|0;H[6]=(H[6]+g)|0;H[7]=(H[7]+h)|0;
-    }
-    var hex='';
-    for(var i=0;i<8;i++){ var s=(H[i]>>>0).toString(16); while(s.length<8) s='0'+s; hex+=s; }
-    return hex;
-  }
-  const loginGate=document.getElementById("loginGate");
-  function isAuthed(){ try{ return sessionStorage.getItem("hec_auth")==="ok"; }catch(e){ return false; } }
-  function hideGate(){ loginGate.classList.add("hidden"); }
-  function showGate(){ loginGate.classList.remove("hidden"); }
-  // 暂时禁用门禁与密码：直接放行（恢复时改回 if(isAuthed()){ hideGate(); }）
-  hideGate();
-  document.getElementById("loginForm").addEventListener("submit", function(e){
-    e.preventDefault();
-    const u=document.getElementById("loginUser").value;
-    const p=document.getElementById("loginPass").value;
-    const err=document.getElementById("loginErr");
-    if(sha256(u)===AUTH_USER && sha256(p)===AUTH_PASS){
-      try{ sessionStorage.setItem("hec_auth","ok"); }catch(e){}
-      hideGate(); err.textContent="";
-    } else {
-      err.textContent="用户名或密码错误。";
-    }
-  });
   // 防反编译：禁用右键 / 选中 / 拖拽 / 常见开发者工具快捷键（仅作防随手查看，非真正加密）
   try{
     document.addEventListener("contextmenu", function(e){ e.preventDefault(); }, false);

@@ -610,8 +610,8 @@
       {k:"tReturnPriOld",l:"一次侧回水温度",u:"℃"},
       {k:"tSupplySec",l:"二次侧供水温度",u:"℃"},
       {k:"tReturnSecOld",l:"二次侧回水温度",u:"℃"},
-      {k:"hours",l:"年运行小时",u:"h"},
-      {k:"heatAnnual",l:"年供热量",u:"MWh"}
+      {k:"hours",l:"年运行小时",u:"h",hint:"年运行小时（h/年）。修改后自动按「换热量(MW)×年运行小时」重算年供热量，直接影响热源效率与回水温度考核等收益（除非年供热量已被手动覆盖）。"},
+      {k:"heatAnnual",l:"年供热量",u:"MWh",hint:"年供热量（MWh/年）。默认由「换热量×年运行小时」自动联动；如有实测抄表值可直接手填，手填后年运行小时不再自动覆盖。"}
     ]},
     {sec:"改造目标", items:[
       {k:"tSupplyPriNew",l:"目标一次侧供水温度",u:"℃"},
@@ -665,6 +665,8 @@
   // 物理关系: Q(MW) = flow(m³/h) × cp × (tSupplyPri − tReturnPriOld) / 3600
   // 输入任一个，自动算另一个；改现状温度时按 designSource(最后手填的那个) 重算伙伴
   let designSource = "flowDesign";
+  // 年供热量联动模式：auto=由「换热量×年运行小时」自动计算；manual=用户手填实测值，不再被自动覆盖
+  let heatAnnualMode = "auto";
   function dTOld(){ return state.tSupplyPri - state.tReturnPriOld; }
   function flowFromHeat(){
     const dT = dTOld();
@@ -680,13 +682,21 @@
     state[k] = v;
     const el = document.getElementById("in_"+k); if(el) el.value = v;
   }
+  // 年供热量自动联动：年供热量(MWh)=换热量(MW)×年运行小时(h)
+  function syncHeatAnnual(){
+    if(heatAnnualMode === "auto" && state.heatDuty > 0 && state.hours > 0){
+      setField("heatAnnual", Math.round(state.heatDuty * state.hours * 10) / 10);
+    }
+  }
   function onDesignInput(k){
     if(k === "heatDuty"){
       designSource = "heatDuty";
       const f = flowFromHeat(); if(f != null) setField("flowDesign", f);
+      syncHeatAnnual();
     } else if(k === "flowDesign"){
       designSource = "flowDesign";
       const q = heatFromFlow(); if(q != null) setField("heatDuty", q);
+      syncHeatAnnual();
     } else if(k === "tSupplyPri" || k === "tReturnPriOld"){
       // 现状温差变了：保留 designSource，重算另一个
       if(designSource === "heatDuty"){
@@ -694,6 +704,14 @@
       } else {
         const q = heatFromFlow(); if(q != null) setField("heatDuty", q);
       }
+      syncHeatAnnual();
+    } else if(k === "hours"){
+      // 年运行小时 → 年供热量联动：年供热量(MWh)=换热量(MW)×年运行小时(h)
+      syncHeatAnnual();
+    } else if(k === "heatAnnual"){
+      // 手填实测年供热量 → 切手动模式，年运行小时/换热量不再自动覆盖
+      const auto = (state.heatDuty > 0 && state.hours > 0) ? Math.round(state.heatDuty * state.hours * 10) / 10 : null;
+      if(auto == null || Math.abs(state.heatAnnual - auto) > 1e-9) heatAnnualMode = "manual";
     }
   }
 
@@ -1044,7 +1062,11 @@
     const f=e.target.files[0]; if(!f) return;
     const rd=new FileReader();
     rd.onload=function(){
-      try{ const s=JSON.parse(rd.result); state=Object.assign({},D,s); setAllFields(); recompute(); saveState(); }
+      try{ const s=JSON.parse(rd.result); state=Object.assign({},D,s);
+        // 导入后按年供热量是否等于「换热量×年运行小时」自动判定联动模式
+        const auto=(state.heatDuty>0&&state.hours>0)?Math.round(state.heatDuty*state.hours*10)/10:null;
+        heatAnnualMode=(auto!=null&&Math.abs(state.heatAnnual-auto)>1e-9)?"manual":"auto";
+        setAllFields(); recompute(); saveState(); }
       catch(err){ alert("JSON 解析失败："+err.message); }
     };
     rd.readAsText(f); e.target.value="";
@@ -1054,7 +1076,7 @@
   document.getElementById("helpBtn").addEventListener("click", openHelp);
   document.getElementById("resetBtn").addEventListener("click",function(){
     if(!confirm("确定重置为示例默认值？当前输入将丢失。")) return;
-    state=Object.assign({},D); setAllFields(); recompute(); saveState();
+    state=Object.assign({},D); heatAnnualMode="auto"; setAllFields(); recompute(); saveState();
   });
 
   recompute();

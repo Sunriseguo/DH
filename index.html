@@ -797,7 +797,7 @@
   // 构建输入
   const inputsEl = document.getElementById("inputs");
   INPUTS.forEach(function(sec){
-    const d=document.createElement("details"); d.open=true;
+    const d=document.createElement("details"); d.open=false;
     const sum=document.createElement("summary"); sum.textContent=sec.sec; d.appendChild(sum);
     const grid=document.createElement("div"); grid.className="field-grid";
     sec.items.forEach(function(it){
@@ -852,7 +852,7 @@
     });
     d.appendChild(grid); inputsEl.appendChild(d);
   });
-  const tgWrap=document.createElement("details"); tgWrap.open=true;
+  const tgWrap=document.createElement("details"); tgWrap.open=false;
   const tgSum=document.createElement("summary"); tgSum.textContent="收益项开关"; tgWrap.appendChild(tgSum);
   const tgBox=document.createElement("div"); tgBox.style.padding="6px 14px 14px";
   TOGGLES.forEach(function(t){

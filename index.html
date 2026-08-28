@@ -1119,7 +1119,7 @@
       ".toolbar button.primary{background:#C62828;color:#fff;border-color:#C62828}"+
       ".hint-bar{background:#f4f6f8;border:1px solid #e6e9ee;border-radius:8px;padding:8px 12px;margin:0 0 14px;font-size:12.5px;color:#5b6470}"+
       "@media print{.toolbar{display:none}.foot{display:none}body{padding:14px 18px}.no-print{display:none}}"+
-      "@page{margin:14mm 14mm 22mm 14mm;@bottom-left{content:\"阿法拉伐 · Alfa Laval\";font-size:9pt;color:#8b93a1;font-family:inherit}@bottom-center{content:\"Version 1.0 · RGO\";font-size:9pt;color:#8b93a1;font-family:inherit}@bottom-right{content:\"第 \" counter(page) \" 页 / 共 \" counter(pages) \" 页\";font-size:9pt;color:#8b93a1;font-family:inherit}}"+
+      "@page{margin:14mm 14mm 22mm 14mm;@bottom-left{content:\"阿法拉伐 · Alfa Laval\";font-size:9pt;color:#8b93a1;font-family:inherit}@bottom-right{content:\"第 \" counter(page) \" 页 / 共 \" counter(pages) \" 页\";font-size:9pt;color:#8b93a1;font-family:inherit}}"+
       "</style></head><body>"+
       "<div class=\"toolbar no-print\"><button onclick=\"window.close()\">关闭</button><button class=\"primary\" onclick=\"window.print()\">打印 / 存为 PDF</button></div>"+
       "<div class=\"hint-bar no-print\">提示：点击右上角「打印 / 存为 PDF」按钮，在打印对话框的“目标/打印机”中选择「另存为 PDF」即可保存为 PDF 文件。</div>"+
@@ -1145,7 +1145,7 @@
       "<h3>产品技术特点</h3>"+
       "<img class=\"feature-img\" src=\""+FEATURE_3_DATA+"\" alt=\"阿法拉伐板式换热器技术特点\">"+
       "</div>"+
-      "<div class=\"foot\"><span>阿法拉伐 · Alfa Laval</span><span class=\"vr\">Version 1.0 · RGO</span></div>"+
+      "<div class=\"foot\"><span>阿法拉伐 · Alfa Laval</span></div>"+
       "</body></html>";
 
     const w = window.open("","_blank","width=960,height=1200,left="+(screen.width-960>>1)+",top=40");
@@ -1358,6 +1358,5 @@
   recompute();
 })();
 </script>
-<div class="version-stamp">Version 1.0 · RGO</div>
 </body>
 </html>

@@ -1184,6 +1184,7 @@
       ".ckbox input:checked{background:linear-gradient(180deg,#4a90d9,#2b6cb8);border-color:#2b6cb8}"+
       ".ckbox input:checked::after{content:\"\";position:absolute;left:4px;top:1px;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}"+
       "@media print{.sec-off{display:none !important}.toolbar{display:none}.foot{display:none}.no-print{display:none}body{padding:12px 16px;font-size:12px;line-height:1.45}svg.schematic{height:auto;min-height:0;max-height:340px}.feature-img{display:block;width:100%;max-width:100%;height:auto;max-height:340px;margin:8px auto 2px;border-radius:8px;border:1px solid #eef1f5;page-break-inside:avoid}table.ptbl td,table.btbl td{padding:2px 8px;font-size:11px}table.ptbl,table.btbl{margin-bottom:4px}.sec{margin-bottom:4px}h3{margin:8px 0 4px}.feature-cap{font-size:11px;margin:6px 0 0}.value-recap{margin:8px 0 0;gap:5px}.vr-item{padding:5px 5px}.vr-v{font-size:12.5px}.vr-l{font-size:10px}.vr-u{font-size:9.5px}.core .k{padding:6px 4px}.core .k .v{font-size:15px}.core .k .l{font-size:11px}}"+
+      "@media screen{html{background:#e9edf3}body{box-sizing:border-box;width:min(1180px,100%);max-width:1180px;margin:24px auto;padding:76px 44px 60px;background:#fff;border:1px solid #dce3ec;border-radius:14px;box-shadow:0 18px 52px rgba(15,23,42,.11)}h3{font-size:14.5px}.hdr{border-bottom:1px solid #dce3ec;padding-bottom:16px}.foot{position:static;padding:12px 0 0;border-top:1px solid #e3e8ef;background:transparent;box-shadow:none}.rsec{margin-bottom:6px}}"+
       "@page{size:A4;margin:12mm 12mm 14mm 12mm;@bottom-left{content:\"阿法拉伐 · Alfa Laval\";font-size:9pt;color:#8b93a1;font-family:inherit}@bottom-right{content:\"第 \" counter(page) \" 页 / 共 \" counter(pages) \" 页\";font-size:9pt;color:#8b93a1;font-family:inherit}}"+
       "</style></head><body>"+
       "<div class=\"toolbar no-print\"><button onclick=\"window.close()\">关闭</button><button class=\"primary\" onclick=\"window.print()\">打印 / 存为 PDF</button></div>"+
@@ -1220,7 +1221,7 @@
       "<scr"+"ipt>(function(){var cks=document.querySelectorAll('input.sec-ck');for(var i=0;i<cks.length;i++){(function(cb){var host=cb.closest('.sec,.rsec,.feature-sec');if(!host)return;function sync(){host.classList.toggle('sec-off',!cb.checked);}cb.addEventListener('change',sync);sync();})(cks[i]);}})();<\/scr"+"ipt>"+
       "</body></html>";
 
-    const w = window.open("","_blank","width=960,height=1200,left="+(screen.width-960>>1)+",top=40");
+    const w = window.open("","_blank","width=1240,height=1200,left="+(screen.width-1240>>1)+",top=40");
     if(!w){ alert("浏览器拦截了新窗口，请允许该站点弹窗后重试。"); return; }
     w.document.open(); w.document.write(html); w.document.close();
     w.focus();

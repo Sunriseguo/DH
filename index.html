@@ -239,7 +239,7 @@
   <!-- 系统原理图（实时）：占首屏约 2/5，整页顶部 -->
   <div class="card schematic-wrap">
     <h2><span class="dot"></span>系统原理图（实时）</h2>
-    <svg class="schematic" viewBox="0 0 900 360" preserveAspectRatio="xMidYMid meet" role="img" aria-label="换热系统原理图">
+    <svg class="schematic" viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" role="img" aria-label="换热系统原理图">
         <defs>
           <marker id="arrow-pri-sup" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto">
             <path d="M0,1 L11,6 L0,11 z" style="fill:#C62828"></path>
@@ -304,7 +304,7 @@
         </g>
 
         <!-- 顶部端温差 -->
-        <text class="t-approach" id="top_approach" x="450" y="26">T approach=30.0℃</text>
+        <text class="t-approach" id="top_approach" x="450" y="18">T approach=30.0℃</text>
 
         <!-- 板式换热器（中央蓝色竖放） -->
         <ellipse class="phe-shadow" cx="450" cy="325" rx="80" ry="14"></ellipse>
@@ -388,7 +388,7 @@
         <text id="sec_head_red" x="620" y="220" style="fill:#1E88E5;font-size:11px;text-anchor:middle">↓64% 二次侧管网阻力降</text>
 
         <!-- 底部端温差 -->
-        <text class="t-approach" id="bot_approach" x="450" y="350">T approach=5.0℃</text>
+        <text class="t-approach" id="bot_approach" x="450" y="368">T approach=5.0℃</text>
       </svg>
 
       <div class="legend">
@@ -1284,7 +1284,7 @@
   ];
 
   const sensEl=document.getElementById("sens");
-  const SROW=[45,40,35], SCOL=[0.7,0.8,0.9];
+  // SROW/SCOL 改在 recompute() 内按当前 state.tReturnPriNew/state.priceElec 现算（2026-09-10 修复：原本硬编码导致不跟随用户录入）
 
   function colorScale(v,min,max){
     // v 越大越绿，越小越红
@@ -1353,7 +1353,11 @@
     });
     scenTbl.innerHTML=sHtml;
 
-    // 敏感性
+    // 敏感性：SROW/SCOL 以当前输入的电价/回水温度为中心，±0.1 元/kWh、±5℃
+    const sensBaseT=Number(state.tReturnPriNew);
+    const sensBasePe=Number(state.priceElec);
+    const SROW=[sensBaseT+5,sensBaseT,sensBaseT-5];
+    const SCOL=[Math.round((sensBasePe-0.1)*100)/100,sensBasePe,Math.round((sensBasePe+0.1)*100)/100];
     let npvMin=Infinity,npvMax=-Infinity; const cells=[];
     SROW.forEach(function(rt){
       SCOL.forEach(function(pe){
